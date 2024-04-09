@@ -75,8 +75,6 @@ class Reptile(Animal):
         return "Рептилии едят растения и других животных"
 
 
-#animals = [Bird("Соловей", 1), Mammal("Медведь", 5), Reptile("Змеюка", 6)]
-
 def animal_sound(animals):
     sounds = []
     for animal in animals:
@@ -92,7 +90,6 @@ class Zoo:
     def add_animal(self, animal):
         self.animals.append(animal)
         print(f"Животное {animal.name} добавлено в зоопарк")
-
 
     def add_employee(self, employee):
         self.employees.append(employee)
@@ -111,7 +108,7 @@ class Zoo:
     def __str__(self):
         return f"В зоопарке {len(self.animals)} животных и {len(self.employees)} сотрудников"
 
-# доп функционал - сохранение и загрузка в файл
+    # доп функционал - сохранение и загрузка в файл
 
     def save_to_file(self):
         filename = input("Введите имя файла для сохранения: ")
@@ -133,6 +130,8 @@ class Zoo:
                 pickle.dump([[], []], file)
             self.animals = []
             self.employees = []
+
+
 class Employee:
     def __init__(self, name, surname, position):
         self.name = name
@@ -159,7 +158,6 @@ class Veterinarian(Employee):
         print(f"Животное {animal.name} вылечено {self.name} {self.surname}")
 
 
-
 '''testing zone'''
 # Создание нового зоопарка и загрузка информации из файла
 my_zoo = Zoo()
@@ -183,7 +181,8 @@ my_zoo.add_employee(ZooKeeper("Лунтик", "Смешариков"))
 #блок с операциями над животными
 #print(f'Животное {my_zoo.animals[0].name} покормлено {my_zoo.employees[0].name} {my_zoo.employees[0].surname}')
 #my_zoo.employees[0].feed_animal(my_zoo.animals[0])
-#feed_all_animals(my_zoo)
+my_zoo.feed_all_animals()
+print(animal_sound(my_zoo.animals))
 
 # в первой версии вынимал тип класса функцией isinstance()
 # for animal in my_zoo.animals:
@@ -212,5 +211,3 @@ for i, employee in enumerate(my_zoo.get_employees(), start=1):
 
 animals = my_zoo.get_animals()
 print(f'Самое молодое животное: {min(animals, key=lambda animal: animal.age)}')
-
-

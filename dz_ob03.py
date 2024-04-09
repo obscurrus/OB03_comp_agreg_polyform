@@ -23,7 +23,7 @@
 о зоопарке в файл и возможность её загрузки, чтобы у вашего зоопарка было "постоянное состояние"
 между запусками программы."""
 
-import json
+import pickle
 
 
 class Animal:
@@ -91,9 +91,12 @@ class Zoo:
 
     def add_animal(self, animal):
         self.animals.append(animal)
+        print(f"Животное {animal.name} добавлено в зоопарк")
+
 
     def add_employee(self, employee):
         self.employees.append(employee)
+        print(f"Сотрудник {employee.name} {employee.surname} добавлен в зоопарк")
 
     def get_animals(self):
         return self.animals
@@ -108,7 +111,28 @@ class Zoo:
     def __str__(self):
         return f"В зоопарке {len(self.animals)} животных и {len(self.employees)} сотрудников"
 
+# доп функционал - сохранение и загрузка в файл
 
+    def save_to_file(self):
+        filename = input("Введите имя файла для сохранения: ")
+        with open(filename, 'wb') as file:
+            pickle.dump([self.animals, self.employees], file)
+        print("Информация о зоопарке успешно сохранена в файл.")
+
+    def load_from_file(self):
+        filename = input("Введите имя файла для загрузки (или имя файла для создания нового зоопарка): ")
+        try:
+            with open(filename, 'rb') as file:
+                data = pickle.load(file)
+                self.animals = data[0]
+                self.employees = data[1]
+            print("Зоопарк успешно загружен из файла.")
+        except FileNotFoundError:
+            print("Файл не найден. Будет создан новый файл с пустым зоопарком.")
+            with open(filename, 'wb') as file:
+                pickle.dump([[], []], file)
+            self.animals = []
+            self.employees = []
 class Employee:
     def __init__(self, name, surname, position):
         self.name = name
@@ -137,18 +161,27 @@ class Veterinarian(Employee):
 
 
 '''testing zone'''
-
+# Создание нового зоопарка и загрузка информации из файла
 my_zoo = Zoo()
-my_zoo.add_animal(Bird("Соловей", 1))
-my_zoo.add_animal(Bird("Кукушка", 2))
-my_zoo.add_animal(Mammal("Медведь", 5))
-my_zoo.add_animal(Reptile("Змеюка", 6))
-my_zoo.add_employee(ZooKeeper("Вася", "Пупкин"))
-my_zoo.add_employee(Veterinarian("Петя", "Иванов"))
+my_zoo.load_from_file()
 
-#print(f'Животное {my_zoo.animals[0].name} покормлено {my_zoo.employees[0].name} {my_zoo.employees[0].surname}')
+#блок отображающий содержимое зоопарка
 print(my_zoo.__str__())
 
+for animal in my_zoo.get_animals():
+    print(f"{animal.animal_type}. {animal.name}. Возраст {animal.age}")
+
+for i, employee in enumerate(my_zoo.get_employees(), start=1):
+    print(f"Сотрудник {i}: {employee}")
+
+#добавление животных и сотрудников - тут надо вставить ручной ввод
+my_zoo.add_animal(Bird("Цапля", 3))
+#my_zoo.add_animal(Mammal("Заяц", 2))
+my_zoo.add_employee(ZooKeeper("Лунтик", "Смешариков"))
+#my_zoo.add_employee(Veterinarian("Петя", "Иванов"))
+
+#блок с операциями над животными
+#print(f'Животное {my_zoo.animals[0].name} покормлено {my_zoo.employees[0].name} {my_zoo.employees[0].surname}')
 #my_zoo.employees[0].feed_animal(my_zoo.animals[0])
 #feed_all_animals(my_zoo)
 
@@ -167,7 +200,10 @@ print(my_zoo.__str__())
 #     elif isinstance(employee, Veterinarian):
 #         print(f"Сотрудник {i}: Ветеринар - {employee.name} {employee.surname}")
 
+# Сохраняем информацию о зоопарке в файл
+my_zoo.save_to_file()
 
+#выводим измененную инфу
 for animal in my_zoo.get_animals():
     print(f"{animal.animal_type}. {animal.name}. Возраст {animal.age}")
 
@@ -176,3 +212,5 @@ for i, employee in enumerate(my_zoo.get_employees(), start=1):
 
 animals = my_zoo.get_animals()
 print(f'Самое молодое животное: {min(animals, key=lambda animal: animal.age)}')
+
+
